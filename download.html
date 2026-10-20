@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Download Open Flow</title>
+<link rel="icon" href="icon.png" />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+body{background:#ebe7d2;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.top{padding:28px 0 0}.top a{display:flex;align-items:center;gap:8px;font:500 24px/1 "EB Garamond",serif;text-decoration:none}.top img{width:28px;height:28px;border-radius:7px}
+.card{position:relative;margin:7vh 20px 40px;width:min(460px,100%);background:#fdfbe8;border:1px solid var(--line);border-radius:28px;padding:36px 32px 30px;text-align:center;box-shadow:0 40px 80px -50px rgba(0,0,0,.5)}
+.card h1{font-size:44px;line-height:1;margin:0 0 8px}.card p.lead{color:var(--muted);margin:0 0 24px}
+.opt{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;margin-bottom:10px;border:1.5px solid var(--ink);border-radius:12px;background:#fff;font:600 15px Figtree,sans-serif;text-decoration:none;color:var(--ink);transition:background .2s}
+.opt:hover{background:#f6f1dc}.opt.primary{background:var(--lilac2)}.opt small{font-weight:500;color:var(--muted)}
+.mascot{position:absolute;right:-34px;top:-40px;width:110px;height:56px;border-radius:28px;background:#fdfbe8;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;gap:3px;transform:rotate(12deg)}
+.mascot i{width:3px;height:14px;border-radius:2px;background:var(--ink)}
+ol{list-style:none;counter-reset:s;padding:0;margin:22px 0 0;text-align:left;display:grid;gap:10px}
+ol li{counter-increment:s;position:relative;padding-left:34px;font-size:14px;color:var(--ink)}
+ol li::before{content:counter(s);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+ol small{display:block;color:var(--muted)}
+.back{color:var(--muted);font-size:14px;margin-bottom:40px}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html"><img src="icon.png" alt="" />Open Flow</a></div>
+<div class="card" id="card">
+  <div class="mascot" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <h1 class="serif">Get Open Flow</h1>
+  <p class="lead">Free. About two minutes to set up.</p>
+  <div id="opts"></div>
+  <ol>
+    <li><b>Install it.</b><small id="step1"></small></li>
+    <li><b>Allow the microphone</b><small id="step2"></small></li>
+    <li><b>Turn on AI cleanup:</b> paste a free key from <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a> on the AI cleanup page.</li>
+  </ol>
+</div>
+<a class="back" href="index.html">← Back to the home page</a>
+<canvas id="confetti"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="common.js"></script>
+<script>
+  const opt = (href, label, sub, primary) => `<a class="opt dl-go${primary ? " primary" : ""}" href="${href}">${label} <small>${sub}</small></a>`;
+  const mac = opt(DL.mac, "Mac", "Apple Silicon (M1+)", IS_MAC), intel = opt(DL.intel, "Mac", "Intel", false), win = opt(DL.win, "Windows", "10 and 11", IS_WIN);
+  document.getElementById("opts").innerHTML = IS_WIN ? win + mac + intel : mac + intel + win;
+  document.getElementById("step1").textContent = IS_WIN
+    ? 'Run the installer. If you see "Windows protected your PC": More info → Run anyway (once).'
+    : "Open the file, drag Open Flow to Applications. If macOS blocks it: System Settings → Privacy & Security → Open Anyway (once).";
+  document.getElementById("step2").textContent = IS_WIN ? "When Windows asks." : "And Accessibility, so it can type into other apps.";
+  document.querySelectorAll(".dl-go").forEach((a) => a.addEventListener("click", (e) => confetti(e.clientX, e.clientY)));
+  if (window.gsap && !REDUCED) {
+    gsap.from("#card", { y: 50, opacity: 0, scale: 0.96, duration: 1, ease: "expo.out" });
+    gsap.from("#card > *:not(.mascot), .opt", { y: 16, opacity: 0, stagger: 0.06, duration: 0.8, ease: "expo.out", delay: 0.2 });
+    gsap.from(".mascot", { rotate: -30, scale: 0, duration: 1, ease: "elastic.out(1,0.45)", delay: 0.5 });
+    gsap.to(".mascot i", { scaleY: () => 0.4 + Math.random() * 1.4, duration: 0.25, yoyo: true, repeat: -1, repeatRefresh: true, ease: "sine.inOut", stagger: 0.04 });
+    gsap.to(".mascot", { y: -6, rotate: 8, duration: 2.2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  }
+</script>
+</body>
+</html>
