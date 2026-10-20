@@ -40,9 +40,6 @@ nav .brand img{width:24px;height:24px;border-radius:6px}
 #pill .shape{fill:#fdfbe8;stroke:var(--ink);stroke-width:3}
 #pill:hover .shape{fill:#fff}
 #pill .bars rect{fill:var(--ink)}
-.fixes{position:absolute;z-index:3;transform:translate(-50%,-100%);pointer-events:none;text-align:center}
-.fixes .word{display:inline-block;font:600 30px Figtree,sans-serif;color:var(--ink)}
-.fixes .badge{display:inline-flex;align-items:center;gap:6px;background:var(--mint);color:#fff;font:600 14px Figtree,sans-serif;padding:7px 14px;border-radius:999px;box-shadow:0 10px 24px -12px rgba(0,0,0,.5);white-space:nowrap}
 /* marquee */
 .band{background:var(--black);color:#e9e8e1;border-radius:40px 40px 0 0;padding:36px 0 40px;overflow:hidden;position:relative;z-index:3}
 .band .eyebrow{text-align:center;color:#8f8e89;margin-bottom:20px}
@@ -123,3 +120,14 @@ footer{padding:70px 28px 28px;overflow:hidden}
 .s-copy h3{font:400 32px/1.1 "EB Garamond",serif;margin:0 0 12px}.s-copy p{margin:0;color:var(--ink);font-size:15px}
 @media(max-width:860px){.s-index{display:none}.s-copy{left:8vw;right:8vw;width:auto;top:auto;bottom:4vh}}
 .s-head2 h2{font-size:clamp(34px,4.2vw,58px)}
+
+/* the correction above the pill: one element that morphs (words → strike → edit → green badge → tucks into the pill).
+   The box's bottom edge sits on the pill's top, and it clips, so the badge slides down "into" the pill. */
+.fixes{position:absolute;z-index:3;width:460px;height:150px;transform:translate(-50%,-100%);overflow:hidden;pointer-events:none}
+.frow{position:absolute;left:0;right:0;bottom:34px;text-align:center;white-space:nowrap;font:600 30px/1 Figtree,sans-serif;color:var(--ink)}
+.frow .w{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;padding:0 .14em}
+.frow .w .c{display:inline-block}
+.fslash{position:absolute;bottom:26px;width:4px;height:44px;margin-left:-2px;border-radius:3px;background:#c9a7f0;transform-origin:50% 50%;opacity:0}
+.fbadge{position:absolute;left:50%;bottom:30px;height:40px;width:40px;margin-left:-20px;border-radius:999px;background:var(--mint);color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0;box-shadow:0 12px 26px -12px rgba(0,0,0,.5)}
+.fbadge span{font:600 16px Figtree,sans-serif;white-space:nowrap}
+.fbadge .c{display:inline-block}

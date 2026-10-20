@@ -70,20 +70,56 @@ if (window.gsap && !REDUCED) {
   pill.addEventListener("mouseenter", () => gsap.to(pill, { scale: 1.06, svgOrigin: "725 760", duration: 0.5, ease: "elastic.out(1,0.5)" }));
   pill.addEventListener("mouseleave", () => gsap.to(pill, { scale: 1, svgOrigin: "725 760", duration: 0.5, ease: "elastic.out(1,0.5)" }));
 
-  // Corrections above the pill: the raw bit pops up, wobbles, falls away, then a green badge confirms the fix.
-  const fixes = document.getElementById("fixes"), word = document.getElementById("fixword"), badge = document.getElementById("fixbadge"), ftext = document.getElementById("fixtext");
-  const place = () => { const r = pill.querySelector(".shape").getBoundingClientRect(), h = document.querySelector(".hero").getBoundingClientRect(); fixes.style.left = r.left - h.left + r.width / 2 + "px"; fixes.style.top = r.top - h.top - 14 + "px"; };
+  // The correction above the pill is ONE element that morphs, like the reference:
+  // words peel off the stream and arc into a row → a lilac slash strikes the bad word → it collapses and the
+  // neighbours are fixed in place → a green dot grows into a pill that swallows the row and shows the label
+  // → the badge slides down behind the Flow pill (the box clips at the pill's top edge).
+  const FIXES2 = [
+    { words: [["on", "on."], ["so", null], ["can", "Can"]], label: "Split sentence" },
+    { words: [["the", "the"], ["the", null], ["launch", "launch"]], label: "Removed repetition" },
+    { words: [["um", null], ["can", "Can"], ["we", "we"]], label: "Removed filler" },
+    { words: [["3", null], ["no", null], ["4", "4"]], label: "Kept your correction" },
+    { words: [["priya", "Priya"]], label: "Fixed capitalisation" },
+  ];
+  const fixes = document.getElementById("fixes"), row = document.getElementById("frow"), slash = document.getElementById("fslash"),
+    badge = document.getElementById("fbadge"), flabel = document.getElementById("flabel");
+  const place = () => { const r = pill.querySelector(".shape").getBoundingClientRect(), h = document.querySelector(".hero").getBoundingClientRect();
+    fixes.style.left = r.left - h.left + r.width / 2 + "px"; fixes.style.top = r.top - h.top + 3 + "px"; };
   place(); addEventListener("resize", place);
+  const chars = (el, text) => { el.innerHTML = ""; [...text].forEach((ch) => { const c = document.createElement("span"); c.className = "c"; c.textContent = ch === " " ? "\u00a0" : ch; el.appendChild(c); }); return el.querySelectorAll(".c"); };
   let k = 0;
   const cycle = () => {
-    const [w, t] = FIXES[k++ % FIXES.length];
-    word.textContent = w; ftext.textContent = t;
-    gsap.timeline({ onComplete: () => gsap.delayedCall(0.6, cycle) })
-      .fromTo(word, { y: 20, opacity: 0, rotate: -8, scale: 0.8 }, { y: 0, opacity: 1, rotate: 4, scale: 1, duration: 0.5, ease: "back.out(2.5)" })
-      .to(word, { rotate: -4, duration: 0.25, yoyo: true, repeat: 2, ease: "sine.inOut" })
-      .to(word, { y: 30, opacity: 0, scale: 0.6, duration: 0.35, ease: "power2.in" }, "+=0.2")
-      .fromTo(badge, { y: 12, opacity: 0, scale: 0.8 }, { y: -6, opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "-=0.1")
-      .to(badge, { opacity: 0, y: -18, duration: 0.4, ease: "power2.in" }, "+=1.1");
+    const fx = FIXES2[k++ % FIXES2.length];
+    row.innerHTML = ""; gsap.set(row, { opacity: 1 }); gsap.set(badge, { opacity: 0, width: 40, marginLeft: -20, y: 0, scale: 0 });
+    const words = fx.words.map(([t]) => { const w = document.createElement("span"); w.className = "w"; chars(w, t); row.appendChild(w); return w; });
+    const all = row.querySelectorAll(".c");
+    const tl = gsap.timeline({ onComplete: () => gsap.delayedCall(0.5, cycle) });
+    // 1. letters arc up out of the stream (from bottom-left, where the raw text enters the pill)
+    tl.fromTo(all, { x: -150, y: 70, rotation: -35, opacity: 0 }, { keyframes: [{ x: -40, y: -26, rotation: -10, opacity: 1, duration: 0.32, ease: "power2.out" }, { x: 0, y: 0, rotation: 0, duration: 0.42, ease: "back.out(2)" }], stagger: 0.035 });
+    tl.to({}, { duration: 0.35 });
+    // 2-3. strike each removed word, collapse it, then fix the neighbours in place
+    fx.words.forEach(([t, to], i) => {
+      if (to !== null) return;
+      const w = words[i];
+      tl.call(() => { const wr = w.getBoundingClientRect(), fr = fixes.getBoundingClientRect(); gsap.set(slash, { left: wr.left - fr.left + wr.width / 2, rotation: 28, scaleY: 0, y: 0, opacity: 1 }); gsap.set(w, { width: w.offsetWidth }); });
+      tl.to(slash, { scaleY: 1, duration: 0.22, ease: "power2.out" });
+      tl.to(w, { width: 0, paddingLeft: 0, paddingRight: 0, opacity: 0, duration: 0.4, ease: "power3.inOut" }, "+=0.25");
+      tl.to(slash, { scaleY: 0.12, y: 16, opacity: 0, duration: 0.4, ease: "power2.in" }, "<");
+    });
+    fx.words.forEach(([t, to], i) => {
+      if (to === null || to === t) return;
+      const w = words[i];
+      tl.to(w, { opacity: 0, y: -8, filter: "blur(4px)", duration: 0.14 }, "+=0.05").call(() => chars(w, to)).to(w, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "back.out(2)" });
+    });
+    tl.to({}, { duration: 0.6 });
+    // 4. a green dot grows into a pill that swallows the row; the label rises in
+    tl.call(() => chars(flabel, "✓ " + fx.label));
+    tl.to(badge, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(3)" });
+    tl.to(row, { opacity: 0, scale: 0.9, duration: 0.25 }, "<0.05");
+    tl.call(() => { const wdt = flabel.scrollWidth + 34; gsap.to(badge, { width: wdt, marginLeft: -wdt / 2, duration: 0.5, ease: "expo.out" }); gsap.fromTo(flabel.querySelectorAll(".c"), { yPercent: 130, opacity: 0 }, { yPercent: 0, opacity: 1, stagger: 0.018, duration: 0.45, ease: "expo.out", delay: 0.12 }); });
+    tl.to({}, { duration: 1.6 });
+    // 5. tuck down into the Flow pill
+    tl.to(badge, { y: 70, duration: 0.45, ease: "power3.in" });
   };
   gsap.delayedCall(1.2, cycle);
 
