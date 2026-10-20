@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Open Flow: speak, and it types</title>
+<meta name="description" content="Free voice dictation for Mac and Windows. Hold a key, speak, and clean text appears in any app." />
+<link rel="icon" href="icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f5f0; --ink: #141413; --muted: #6b6a65; --line: #e4e1d8;
+    --card: #ffffff; --lilac: #9b6fc4; --lilac-soft: #efe6f7; --black: #0b0b0b;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 Figtree, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 500 24px/1 "EB Garamond", serif; text-decoration: none; }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  nav .links a { margin-left: 22px; text-decoration: none; color: var(--muted); font-weight: 500; font-size: 15px; }
+  nav .links a:hover { color: var(--ink); }
+
+  header.hero { text-align: center; padding: 64px 0 40px; }
+  h1 { font: 400 clamp(44px, 7vw, 76px)/1.02 "EB Garamond", serif; letter-spacing: -0.02em; margin: 0 0 18px; }
+  h1 em { color: var(--lilac); }
+  .lede { font-size: 19px; color: var(--muted); max-width: 560px; margin: 0 auto 32px; }
+  .cta { display: inline-flex; align-items: center; gap: 10px; background: var(--black); color: #fcfcfb; text-decoration: none; padding: 15px 26px; border-radius: 999px; font-weight: 600; font-size: 16px; transition: transform .15s ease, box-shadow .15s ease; box-shadow: 0 10px 30px -12px rgba(0,0,0,.45); }
+  .cta:hover { transform: translateY(-1px); box-shadow: 0 14px 34px -12px rgba(0,0,0,.5); }
+  .cta svg { width: 18px; height: 18px; }
+  .alt { margin-top: 14px; font-size: 14px; color: var(--muted); }
+  .alt a { color: var(--muted); }
+  .free { display: inline-block; margin-bottom: 22px; padding: 5px 12px; border-radius: 999px; background: var(--lilac-soft); color: var(--lilac); font-size: 13px; font-weight: 600; }
+
+  /* the Flow Bar, drawn in CSS */
+  .demo { margin: 52px auto 0; width: min(560px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 28px 22px; text-align: left; box-shadow: 0 30px 60px -40px rgba(0,0,0,.35); }
+  .demo .typed { font-size: 18px; min-height: 58px; }
+  .demo .typed .caret { display: inline-block; width: 2px; height: 1.1em; background: var(--lilac); vertical-align: -3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .bar { margin: 18px auto 0; height: 30px; width: 132px; border-radius: 15px; background: var(--black); display: flex; align-items: center; justify-content: center; gap: 3px; }
+  .bar i { width: 2px; height: 6px; border-radius: 1px; background: #fff; animation: wave 1s ease-in-out infinite; }
+  .bar i:nth-child(even) { background: #d2ace9; }
+  @keyframes wave { 0%,100% { transform: scaleY(.5); } 50% { transform: scaleY(2.2); } }
+  @media (prefers-reduced-motion: reduce) { .bar i, .caret { animation: none; } }
+
+  section { padding: 64px 0; border-top: 1px solid var(--line); }
+  h2 { font: 400 40px/1.1 "EB Garamond", serif; letter-spacing: -0.015em; margin: 0 0 10px; }
+  .sub { color: var(--muted); margin: 0 0 30px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  kbd { display: inline-block; min-width: 24px; padding: 1px 7px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; background: #fff; font: 600 13px/20px Figtree, sans-serif; text-align: center; }
+
+  .tabs { display: inline-flex; background: #ebe8df; border-radius: 999px; padding: 4px; margin-bottom: 22px; }
+  .tabs button { border: 0; background: none; padding: 8px 18px; border-radius: 999px; font: 600 14px Figtree, sans-serif; color: var(--muted); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ol.steps li { counter-increment: s; position: relative; padding: 16px 18px 16px 58px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 18px; top: 15px; width: 26px; height: 26px; border-radius: 50%; background: var(--black); color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+  ol.steps b { font-weight: 600; }
+  ol.steps small { display: block; color: var(--muted); margin-top: 2px; }
+  [hidden] { display: none !important; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  td, th { padding: 13px 16px; border-bottom: 1px solid var(--line); text-align: left; font-size: 15px; }
+  th { font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  tr:last-child td { border-bottom: 0; }
+
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { color: var(--muted); margin: 10px 0 0; }
+  footer { padding: 40px 0 60px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="#"><img src="icon.png" alt="" />Open Flow</a>
+    <div class="links"><a href="#install">Install</a><a href="#use">How to use</a><a href="#faq">FAQ</a></div>
+  </nav>
+
+  <header class="hero">
+    <span class="free">Free · Mac &amp; Windows · Beta</span>
+    <h1>Speak, and it <em>types.</em></h1>
+    <p class="lede">Hold a key, talk naturally, let go. Clean, punctuated text appears in whatever app you're in: email, Slack, docs, the terminal.</p>
+    <a class="cta" id="download" href="#install">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></svg>
+      <span id="download-label">Download</span>
+    </a>
+    <p class="alt" id="download-alt"></p>
+
+    <div class="demo" aria-hidden="true">
+      <div class="typed"><span id="typed"></span><span class="caret"></span></div>
+      <div class="bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </header>
+
+  <section id="install">
+    <h2>Install</h2>
+    <p class="sub">Takes about two minutes. The beta isn't signed by Apple or Microsoft yet, so you approve it once.</p>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-mac" aria-selected="true">Mac</button>
+      <button role="tab" id="tab-win" aria-selected="false">Windows</button>
+    </div>
+    <ol class="steps" id="steps-mac">
+      <li><b>Download</b> the Mac version: <a href="DL_MAC_ARM">Apple Silicon (M1 and newer)</a> or <a href="DL_MAC_INTEL">Intel</a>.<small>Not sure? Apple menu → About This Mac. "Chip: Apple M…" means Apple Silicon.</small></li>
+      <li><b>Open the file</b> and drag <b>Open Flow</b> into <b>Applications</b>.</li>
+      <li><b>Open it once.</b> macOS will block it. Go to <b>System Settings → Privacy &amp; Security</b>, scroll down and click <b>Open Anyway</b>.<small>You only do this once.</small></li>
+      <li><b>Allow Microphone and Accessibility</b> when asked.<small>Accessibility lets Open Flow paste into other apps.</small></li>
+      <li><b>Turn on AI cleanup:</b> get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a> and paste it on the <b>AI cleanup</b> page.<small>Without it you still get dictation, just without the polish.</small></li>
+    </ol>
+    <ol class="steps" id="steps-win" hidden>
+      <li><b>Download</b> <a href="DL_WIN">the Windows installer</a>.</li>
+      <li><b>Run it.</b> If Windows shows "Windows protected your PC", click <b>More info → Run anyway</b>.<small>You only do this once.</small></li>
+      <li><b>Allow the microphone</b> when asked.</li>
+      <li><b>Turn on AI cleanup:</b> get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a> and paste it on the <b>AI cleanup</b> page.</li>
+    </ol>
+  </section>
+
+  <section id="use">
+    <h2>How to use it</h2>
+    <p class="sub">A small bar sits at the bottom of your screen. The app walks you through it the first time.</p>
+    <table>
+      <tr><th></th><th>Mac</th><th>Windows</th></tr>
+      <tr><td>Dictate: hold, speak, let go</td><td><kbd>⌥</kbd> <kbd>Space</kbd></td><td><kbd>Ctrl</kbd> <kbd>Space</kbd></td></tr>
+      <tr><td>Hands-free</td><td colspan="2">Click the bar. Click again (or ■) to finish.</td></tr>
+      <tr><td>Read selected text aloud</td><td><kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Space</kbd></td><td><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>Space</kbd></td></tr>
+      <tr><td>Get your exact words back</td><td><kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Z</kbd></td><td><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>Z</kbd></td></tr>
+      <tr><td>Polish the selected text</td><td><kbd>⌥</kbd> <kbd>1</kbd></td><td><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>1</kbd></td></tr>
+    </table>
+    <div class="grid" style="margin-top:14px">
+      <div class="card"><h3>Cleans up as you talk</h3><p>Removes "um"s, fixes "3, no, 4", adds punctuation and lists. Never answers your questions; it just types them.</p></div>
+      <div class="card"><h3>Learns your words</h3><p>Fix a name after it's typed and Open Flow remembers it next time.</p></div>
+      <div class="card"><h3>Rewrites in place</h3><p>Select text and press a key to polish it, shorten it, or turn notes into a prompt. You see exactly what changed.</p></div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>Questions</h2>
+    <details><summary>Is it really free?</summary><p>Yes. Speech recognition runs on your computer. AI cleanup uses your own free Groq key.</p></details>
+    <details><summary>What happens to my voice?</summary><p>Your audio is turned into text on your computer and isn't uploaded. With AI cleanup on, only the text goes to Groq. History stays on your computer for two weeks.</p></details>
+    <details><summary>Which languages?</summary><p>English is best. Hindi works too (pick it under Settings → Dictation language). More languages are coming.</p></details>
+    <details><summary>Why does my Mac say it can't check the app?</summary><p>The beta isn't notarized by Apple yet. Use System Settings → Privacy &amp; Security → Open Anyway, once.</p></details>
+    <details><summary>It didn't type anything.</summary><p>Check that Open Flow has Microphone and Accessibility permission (System Settings → Privacy &amp; Security), then quit and reopen it.</p></details>
+  </section>
+</div>
+<footer>Open Flow beta · Built on <a href="https://github.com/cjpais/Handy" target="_blank" rel="noopener">Handy</a> (MIT)</footer>
+
+<script>
+  const BASE = "https://github.com/RAG-KR/OpenFlow-releases/releases/latest/download/";
+  const DL = {
+    mac: BASE + "Open-Flow-mac-apple-silicon.dmg",
+    intel: BASE + "Open-Flow-mac-intel.dmg",
+    win: BASE + "Open-Flow-windows-setup.exe",
+  };
+  document.querySelectorAll('a[href="DL_MAC_ARM"]').forEach(a => a.href = DL.mac);
+  document.querySelectorAll('a[href="DL_MAC_INTEL"]').forEach(a => a.href = DL.intel);
+  document.querySelectorAll('a[href="DL_WIN"]').forEach(a => a.href = DL.win);
+
+  const ua = navigator.userAgent;
+  const isWin = /Windows/.test(ua), isMac = /Macintosh|Mac OS X/.test(ua);
+  const btn = document.getElementById("download"), label = document.getElementById("download-label"), alt = document.getElementById("download-alt");
+  if (isWin) {
+    btn.href = DL.win; label.textContent = "Download for Windows";
+    alt.innerHTML = 'Also for <a href="' + DL.mac + '">Mac</a>';
+  } else if (isMac) {
+    btn.href = DL.mac; label.textContent = "Download for Mac";
+    alt.innerHTML = 'Apple Silicon (M1 and newer). <a href="' + DL.intel + '">Intel Mac</a> · <a href="' + DL.win + '">Windows</a>';
+  } else {
+    label.textContent = "Download";
+    alt.innerHTML = '<a href="' + DL.mac + '">Mac</a> · <a href="' + DL.win + '">Windows</a>';
+  }
+
+  // install tabs (open the visitor's OS first)
+  const tabs = { mac: document.getElementById("tab-mac"), win: document.getElementById("tab-win") };
+  const show = os => {
+    tabs.mac.setAttribute("aria-selected", os === "mac"); tabs.win.setAttribute("aria-selected", os === "win");
+    document.getElementById("steps-mac").hidden = os !== "mac"; document.getElementById("steps-win").hidden = os !== "win";
+  };
+  tabs.mac.onclick = () => show("mac"); tabs.win.onclick = () => show("win");
+  show(isWin ? "win" : "mac");
+
+  // the demo types a cleaned-up sentence
+  const lines = ["Can we move the sync to Friday at 4?", "Thanks for the intro! Moving you to BCC.", "I'm running five minutes late."];
+  const el = document.getElementById("typed");
+  let li = 0, ci = 0;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) el.textContent = lines[0];
+  else (function tick() {
+    const s = lines[li];
+    if (ci <= s.length) { el.textContent = s.slice(0, ci++); setTimeout(tick, 38); }
+    else setTimeout(() => { ci = 0; li = (li + 1) % lines.length; tick(); }, 1800);
+  })();
+</script>
+</body>
+</html>
