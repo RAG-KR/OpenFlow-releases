@@ -9,7 +9,7 @@
   const SPOKEN = "Alright, got the structure ready. Want to walk me through what you're building, or start with a template? Up to you, I'll follow your lead. ";
   // One sentence, two speeds: it crawls left→right through the keyboard card at 45 wpm and runs on through
   // the Open Flow card at 220 wpm (220/45 ≈ 4.9× faster), at the same height so it reads as one string.
-  const FAST = 120; // px per second along the arc
+  const FAST = 270; // px per second along the arc
   const SLOW = FAST * (45 / 220);
   const crawl = $("#crawl"), arct = $("#arct"), arcp = $("#arcp"), arcsvg = document.querySelector(".of svg.arc");
   crawl.textContent = SPOKEN.repeat(8);
@@ -17,9 +17,10 @@
   // the arc is drawn in real pixels of the card's current size, so text never stretches when the card grows
   const ofEl = document.querySelector(".scard.of");
   const drawArc = () => {
-    const w = ofEl.offsetWidth, h = ofEl.offsetHeight, y = h * 0.62;
+    // the reference curve: enters at the keyboard text's height, a gentle hump, leaves a little lower
+    const w = ofEl.offsetWidth, h = ofEl.offsetHeight, y = h * 0.56;
     arcsvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    arcp.setAttribute("d", `M -10 ${y} C ${w * 0.28} ${y - h * 0.22}, ${w * 0.68} ${y - h * 0.26}, ${w + 20} ${y - h * 0.04}`);
+    arcp.setAttribute("d", `M -4 ${y} C ${w * 0.3} ${y - h * 0.15}, ${w * 0.62} ${y - h * 0.16}, ${w + 10} ${y - h * 0.02}`);
   };
   document.fonts.ready.then(() => {
     const one = arct.getComputedTextLength() / 8;
@@ -51,20 +52,21 @@
   const RAW = 'Hey <span class="hl">so um</span> can you <span class="hl">actually wait</span> can you tell the team that <span class="hl">the the</span> launch is gonna slip <span class="hl">I think to like</span> not <span class="hl">Friday the following</span> Monday because we\'re';
   const CLEAN = "Can you let the team know the launch is slipping to Monday? We're still waiting on legal to sign off on the new terms page.";
   const MAIL = "Hi Marcus,<br /><br />Can you let the team know the launch is slipping to Monday?<br /><br />We're still waiting on legal to sign off on the new terms page. We'll have a firm timeline by Thursday.";
-  let cur = -1;
+  let cur = -1, stepTl = null;
   const setStep = (i) => {
     if (i === cur) return; cur = i;
+    stepTl && stepTl.kill();
     document.querySelectorAll("#sindex div").forEach((d, j) => d.classList.toggle("on", j === i));
     gsap.fromTo("#scopy", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", overwrite: "auto" });
     $("#scopy h3").textContent = STEPS[i][0]; $("#scopy p").textContent = STEPS[i][1];
     if (i === 0) {
       $("#sraw").innerHTML = RAW;
-      gsap.timeline().to("#sfield", { opacity: 0, duration: 0.25 }).fromTo("#sraw", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" })
+      stepTl = gsap.timeline().to("#sfield", { opacity: 0, duration: 0.25 }).fromTo("#sraw", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" })
         .to("#spill .x, #spill .ok", { width: 22, opacity: 1, duration: 0.4, ease: "back.out(2)" }, "<")
         .fromTo("#stag", { opacity: 0, y: 8, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2.5)" }, "+=0.4");
     } else {
       $("#sfieldt").innerHTML = i === 1 ? CLEAN : MAIL;
-      gsap.timeline().to("#sraw, #stag", { opacity: 0, duration: 0.25 }).to("#spill .x, #spill .ok", { width: 0, opacity: 0, duration: 0.3 }, "<")
+      stepTl = gsap.timeline().to("#sraw, #stag", { opacity: 0, duration: 0.25 }).to("#spill .x, #spill .ok", { width: 0, opacity: 0, duration: 0.3 }, "<")
         .fromTo("#sfield", { opacity: 0, y: 14, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" })
         .from("#sfieldt", { opacity: 0, filter: "blur(6px)", duration: 0.6, ease: "expo.out" }, "-=0.4");
     }
@@ -80,7 +82,7 @@
         // visual so nothing from step 1 is left on the big card when scrolling back up
         const t = st.progress * tl.duration(), d = tl.labels.D, span = (tl.duration() - d) / 3;
         if (t < d) {
-          if (cur !== -1) { cur = -1; gsap.to("#scopy, #sraw, #stag, #sfield", { opacity: 0, duration: 0.2, overwrite: "auto" }); gsap.to("#spill .x, #spill .ok", { width: 0, opacity: 0, duration: 0.2, overwrite: "auto" }); }
+          if (cur !== -1) { cur = -1; stepTl && stepTl.kill(); gsap.to("#scopy, #sraw, #stag, #sfield", { opacity: 0, duration: 0.2, overwrite: "auto" }); gsap.to("#spill .x, #spill .ok", { width: 0, opacity: 0, duration: 0.2, overwrite: "auto" }); }
         } else setStep(Math.min(2, Math.floor((t - d) / span)));
       },
     },

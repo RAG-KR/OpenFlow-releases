@@ -113,10 +113,10 @@ if (window.gsap && !REDUCED) {
     });
     tl.to({}, { duration: 0.6 });
     // 4. a green dot grows into a pill that swallows the row; the label rises in
-    tl.call(() => chars(flabel, "✓ " + fx.label));
+    tl.call(() => { chars(flabel, fx.label); const ok = document.createElement("i"); ok.className = "ok"; ok.textContent = "✓"; flabel.prepend(ok); });
     tl.to(badge, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(3)" });
     tl.to(row, { opacity: 0, scale: 0.9, duration: 0.25 }, "<0.05");
-    tl.call(() => { const wdt = flabel.scrollWidth + 34; gsap.to(badge, { width: wdt, marginLeft: -wdt / 2, duration: 0.5, ease: "expo.out" }); gsap.fromTo(flabel.querySelectorAll(".c"), { yPercent: 130, opacity: 0 }, { yPercent: 0, opacity: 1, stagger: 0.018, duration: 0.45, ease: "expo.out", delay: 0.12 }); });
+    tl.call(() => { const wdt = flabel.scrollWidth + 40; gsap.to(badge, { width: wdt, marginLeft: -wdt / 2, duration: 0.5, ease: "expo.out" }); gsap.fromTo(flabel.querySelectorAll(".c, .ok"), { yPercent: 130, opacity: 0 }, { yPercent: 0, opacity: 1, stagger: 0.018, duration: 0.45, ease: "expo.out", delay: 0.12 }); });
     tl.to({}, { duration: 1.6 });
     // 5. tuck down into the Flow pill
     tl.to(badge, { y: 70, duration: 0.45, ease: "power3.in" });
@@ -125,7 +125,7 @@ if (window.gsap && !REDUCED) {
 
   // Headline letters rise in, and bounce one after another on hover.
   document.querySelectorAll(".split").forEach((el) => {
-    const s = new SplitText(el, { type: "chars", charsClass: "char" });
+    const s = new SplitText(el, { type: "words,chars", wordsClass: "word", charsClass: "char" });
     gsap.from(s.chars, { yPercent: 110, opacity: 0, rotate: 6, duration: 0.9, ease: "expo.out", stagger: 0.025, scrollTrigger: { trigger: el, start: "top 88%" } });
     // gentle on the big hero headline, a little livelier on section headings
     const lift = el.closest(".hero") ? "-0.06em" : "-0.12em", spring = el.closest(".hero") ? "elastic.out(1,0.6)" : "elastic.out(1,0.45)";
@@ -156,6 +156,18 @@ if (window.gsap && !REDUCED) {
   });
 
   gsap.from("ol.steps li", { x: -30, opacity: 0, stagger: 0.07, duration: 0.8, ease: "expo.out", scrollTrigger: { trigger: "#install", start: "top 70%" } });
+  // the setup rail: fills with scroll, and each step pops to a check as the rail reaches it
+  document.querySelectorAll("ol.steps").forEach((ol) => {
+    const rail = document.createElement("div"); rail.className = "srail"; rail.innerHTML = "<b></b>"; ol.prepend(rail);
+    const items = [...ol.querySelectorAll("li")];
+    ScrollTrigger.create({ trigger: ol, start: "top 65%", end: "bottom 55%", scrub: true,
+      onUpdate: (st) => {
+        gsap.set(rail.firstChild, { scaleY: st.progress });
+        items.forEach((li, j) => { const on = st.progress >= (j + 0.5) / items.length; if (on !== li.classList.contains("done")) { li.classList.toggle("done", on); gsap.fromTo(li, { scale: on ? 0.97 : 1 }, { scale: 1, duration: 0.5, ease: "elastic.out(1,0.5)" }); } });
+      } });
+  });
+  // re-measure pinned scenes once fonts and layout settle (avoids stale positions)
+  addEventListener("load", () => ScrollTrigger.refresh());
   gsap.from(".faq", { y: 60, opacity: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: ".faq", start: "top 85%" } });
   gsap.from(".final", { scale: 0.9, borderRadius: 90, ease: "none", scrollTrigger: { trigger: ".final", start: "top bottom", end: "top 40%", scrub: true } });
   const w = new SplitText("#wordmark", { type: "chars", charsClass: "char" });

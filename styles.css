@@ -102,7 +102,7 @@ footer{padding:70px 28px 28px;overflow:hidden}
 .scard.of{color:#fff;background:radial-gradient(60% 70% at 70% 30%,#5e8fc4 0%,transparent 60%),radial-gradient(50% 60% at 30% 70%,#b07a4a 0%,transparent 65%),radial-gradient(70% 80% at 50% 50%,#3a2a20,#1a120d);box-shadow:0 50px 90px -50px rgba(0,0,0,.7)}
 .scard .lbl{position:absolute;top:34px;left:0;right:0;text-align:center;font-size:14px;z-index:2}
 .scard .lbl b{display:block;font:400 46px/1.05 "EB Garamond",serif}
-.kb .crawl{position:absolute;top:calc(62% - 14px);left:0;white-space:nowrap;font:600 20px Figtree,sans-serif;color:#6e9585;will-change:transform}
+.kb .crawl{position:absolute;top:calc(56% - 15px);left:0;white-space:nowrap;font:600 20px Figtree,sans-serif;color:#7fa596;will-change:transform}
 .of svg.arc{position:absolute;inset:0;width:100%;height:100%;z-index:1}
 .of svg.arc text{font:600 20px Figtree,sans-serif;fill:#fff}
 .spill{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:5px;height:42px;padding:0 10px;border-radius:21px;background:#141413;border:2.5px solid #fdfbe8;box-shadow:0 10px 30px -10px rgba(0,0,0,.6)}
@@ -128,6 +128,37 @@ footer{padding:70px 28px 28px;overflow:hidden}
 .frow .w{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;padding:0 .14em}
 .frow .w .c{display:inline-block}
 .fslash{position:absolute;bottom:26px;width:4px;height:44px;margin-left:-2px;border-radius:3px;background:#c9a7f0;transform-origin:50% 50%;opacity:0}
-.fbadge{position:absolute;left:50%;bottom:30px;height:40px;width:40px;margin-left:-20px;border-radius:999px;background:var(--mint);color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0;box-shadow:0 12px 26px -12px rgba(0,0,0,.5)}
-.fbadge span{font:600 16px Figtree,sans-serif;white-space:nowrap}
+.fbadge{position:absolute;left:50%;bottom:30px;height:42px;width:42px;margin-left:-21px;border-radius:999px;background:var(--ink);color:#fdfbe8;border:2.5px solid #fdfbe8;outline:2px solid var(--ink);display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0;box-shadow:0 12px 26px -12px rgba(0,0,0,.5)}
+.fbadge span{font:600 15.5px Figtree,sans-serif;white-space:nowrap;letter-spacing:-.005em;display:inline-flex;align-items:center}
+.fbadge .ok{width:20px;height:20px;margin-right:8px;border-radius:50%;background:var(--lilac2);color:var(--ink);display:inline-grid;place-items:center;font:800 11px Figtree,sans-serif}
 .fbadge .c{display:inline-block}
+/* the in-app pill guide, recreated (app: src/overlay/PillSurface.tsx) */
+.guide-sec{padding:110px 0}
+.guide-sec .wrap{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.gcard{justify-self:center;width:min(500px,100%);aspect-ratio:360/214;background:#000;border-radius:30px;padding:18px 20px;color:#fcfcfb;display:flex;flex-direction:column;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 50px 90px -50px rgba(0,0,0,.7);font-family:"Figtree",sans-serif}
+.gtop{display:flex;justify-content:space-between;font-size:13px;font-weight:560;color:#6f6e69}.gtop button{background:none;border:0;color:#8f8e89;font:inherit;cursor:pointer}
+.gstage{flex:1;margin:10px 0 12px;border-radius:16px;background:#0e0e0d;border:1px solid #1f1f1e;display:grid;place-items:center;overflow:hidden;position:relative}
+.gtitle{font-size:18px;font-weight:650;margin:0}.gbody{font-size:14px;color:#a6a59f;margin:4px 0 0;min-height:40px}
+.gfoot{display:flex;align-items:center;gap:14px;margin-top:12px}
+.gdots{display:flex;gap:5px;margin-right:auto}.gdots i{display:block;height:6px;width:6px;border-radius:3px;background:#d2ace9;opacity:.25}
+.gback{background:none;border:0;color:#8f8e89;font:560 14px Figtree,sans-serif;cursor:pointer}
+.gnext{height:32px;padding:0 16px;border-radius:16px;border:0;background:#fcfcfb;color:#0b0b0b;font:650 14px Figtree,sans-serif;cursor:pointer}
+.gkeys{display:inline-flex;gap:5px}.gkeys kbd{background:#232321;color:#d9d8d2;border:1px solid #343432;border-bottom-width:2px;min-width:30px;font-size:13px;line-height:26px;padding:0 8px}
+.gkeys kbd.on{background:#2f2c35;border-color:#4a4356;border-bottom-width:1px;transform:translateY(2px)}
+.gmini{height:26px;border-radius:13px;background:#000;border:1px solid #30302f;display:inline-flex;align-items:center;justify-content:center;gap:3px;overflow:hidden;vertical-align:middle}
+.gmini i{width:3px;height:12px;border-radius:2px;background:#fff}.gmini i:nth-child(even){background:#d2ace9}
+.gline{display:flex;align-items:center;gap:16px;font-size:15px;color:#d9d8d2;position:relative}
+.gsel{position:relative;padding:1px 3px}.gsel b{position:absolute;inset:0;border-radius:4px;background:rgba(210,172,233,.32);transform-origin:left;transform:scaleX(0)}.gsel span{position:relative;font-weight:500}
+.gstrike{position:relative;color:#8f8e89}.gstrike b{position:absolute;left:-2px;right:-2px;top:52%;height:2px;background:#ee6a6a;transform-origin:left;transform:scaleX(0)}
+.gchip{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 6px 0 12px;border-radius:15px;background:#1c1a1f;border:1px solid #3a3342;font-weight:600;opacity:0}
+.gchip small{background:rgba(210,172,233,.16);color:#d2ace9;border-radius:9px;padding:1px 8px;font-size:11px;font-weight:700}
+.gcursor{position:absolute;width:14px;height:20px}
+@media(max-width:860px){.guide-sec .wrap{grid-template-columns:1fr}}
+
+/* setup steps: a lilac rail fills as you scroll; each number turns into a check when it's reached */
+ol.steps{position:relative}
+.srail{position:absolute;left:33px;top:30px;bottom:30px;width:3px;border-radius:2px;background:#e9e3cc;z-index:0}
+.srail b{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:2px;background:var(--lilac);transform-origin:top;transform:scaleY(0)}
+ol.steps li{z-index:1}
+ol.steps li.done::before{content:"✓";background:var(--lilac)}
+.split .word{display:inline-block;white-space:nowrap}
