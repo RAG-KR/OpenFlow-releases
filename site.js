@@ -170,10 +170,11 @@ if (window.gsap && !REDUCED) {
     items.forEach((li, j) => {
       const tk = document.createElement("i"); tk.className = "tk"; tk.textContent = "✓"; li.appendChild(tk);
       const t0 = j * seg;
-      if (j) stl.fromTo(rail.firstChild, { scaleY: reach(items[j - 1]) }, { scaleY: reach(li), duration: seg * 0.45, immediateRender: false }, t0);
-      // top, not a transform: a transform would trap the badge under the rail
-      stl.fromTo(li, { top: 30, opacity: 0 }, { top: 0, opacity: 1, duration: seg * 0.4, ease: "power2.out" }, j ? t0 + seg * 0.4 : 0);
-      ticks.push({ el: tk, at: j ? t0 + seg * 0.75 : seg * 0.45, on: false });
+      // order per step: the card arrives, THEN the rail draws down to it, THEN its tick pops (so the rail never
+      // shows through a half-faded badge). top, not a transform: a transform would trap the badge under the rail
+      stl.fromTo(li, { top: 30, opacity: 0 }, { top: 0, opacity: 1, duration: seg * 0.35, ease: "power2.out" }, t0);
+      if (j) stl.fromTo(rail.firstChild, { scaleY: reach(items[j - 1]) }, { scaleY: reach(li), duration: seg * 0.4, immediateRender: false }, t0 + seg * 0.38);
+      ticks.push({ el: tk, at: j ? t0 + seg * 0.82 : seg * 0.45, on: false });
     });
     gsap.set(rail.firstChild, { scaleY: 0 });
     stl.fromTo(rail, { opacity: 0 }, { opacity: 1, duration: seg * 0.4 }, 0);
