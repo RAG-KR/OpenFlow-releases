@@ -91,8 +91,10 @@ if (window.gsap && !REDUCED) {
   document.querySelectorAll(".split").forEach((el) => {
     const s = new SplitText(el, { type: "chars", charsClass: "char" });
     gsap.from(s.chars, { yPercent: 110, opacity: 0, rotate: 6, duration: 0.9, ease: "expo.out", stagger: 0.025, scrollTrigger: { trigger: el, start: "top 88%" } });
+    // gentle on the big hero headline, a little livelier on section headings
+    const lift = el.closest(".hero") ? "-0.06em" : "-0.12em", spring = el.closest(".hero") ? "elastic.out(1,0.6)" : "elastic.out(1,0.45)";
     if (el.classList.contains("hov")) el.addEventListener("mouseenter", () =>
-      gsap.fromTo(s.chars, { y: 0 }, { keyframes: [{ y: "-0.22em", duration: 0.18, ease: "power2.out" }, { y: 0, duration: 0.7, ease: "elastic.out(1.1,0.35)" }], stagger: 0.022, overwrite: "auto" }));
+      gsap.fromTo(s.chars, { y: 0 }, { keyframes: [{ y: lift, duration: 0.2, ease: "power2.out" }, { y: 0, duration: 0.6, ease: spring }], stagger: 0.018, overwrite: "auto" }));
   });
   gsap.from([".hero .lede", ".hero .btn", ".hero .alt"], { y: 24, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.1, delay: 0.5 });
   gsap.to(".hero .inner", { yPercent: -14, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
@@ -121,5 +123,7 @@ if (window.gsap && !REDUCED) {
   gsap.from(".faq", { y: 60, opacity: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: ".faq", start: "top 85%" } });
   gsap.from(".final", { scale: 0.9, borderRadius: 90, ease: "none", scrollTrigger: { trigger: ".final", start: "top bottom", end: "top 40%", scrub: true } });
   const w = new SplitText("#wordmark", { type: "chars", charsClass: "char" });
-  gsap.from(w.chars, { yPercent: 100, stagger: 0.04, ease: "expo.out", duration: 1.2, scrollTrigger: { trigger: "footer", start: "top 85%" } });
+  gsap.from(w.chars, { yPercent: 100, opacity: 0, stagger: 0.04, ease: "expo.out", duration: 1.2, scrollTrigger: { trigger: "footer", start: "top 85%" } });
+  gsap.from(".fpill", { scale: 0, rotate: -20, duration: 1.1, ease: "elastic.out(1,0.5)", delay: 0.4, scrollTrigger: { trigger: "footer", start: "top 85%" } });
+  gsap.to(".fpill i", { scaleY: () => 0.35 + Math.random() * 1.4, duration: 0.24, ease: "sine.inOut", yoyo: true, repeat: -1, repeatRefresh: true, stagger: 0.03 });
 }

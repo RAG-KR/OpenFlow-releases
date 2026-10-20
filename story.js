@@ -7,14 +7,28 @@
 
   // looping text: slow typing on the left, fast speech through the pill on the right
   const SPOKEN = "Alright, got the structure ready. Want to walk me through what you're building, or start with a template? Up to you, I'll follow your lead. ";
-  $("#crawl").textContent = SPOKEN.repeat(4);
-  gsap.to("#crawl", { xPercent: -25, duration: 60, ease: "none", repeat: -1 });
-  const arct = $("#arct");
-  arct.textContent = SPOKEN.repeat(6);
+  // One sentence, two speeds: it crawls left→right through the keyboard card at 45 wpm and runs on through
+  // the Open Flow card at 220 wpm (220/45 ≈ 4.9× faster), at the same height so it reads as one string.
+  const FAST = 120; // px per second along the arc
+  const SLOW = FAST * (45 / 220);
+  const crawl = $("#crawl"), arct = $("#arct"), arcp = $("#arcp"), arcsvg = document.querySelector(".of svg.arc");
+  crawl.textContent = SPOKEN.repeat(8);
+  arct.textContent = SPOKEN.repeat(8);
+  // the arc is drawn in real pixels of the card's current size, so text never stretches when the card grows
+  const ofEl = document.querySelector(".scard.of");
+  const drawArc = () => {
+    const w = ofEl.offsetWidth, h = ofEl.offsetHeight, y = h * 0.62;
+    arcsvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    arcp.setAttribute("d", `M -10 ${y} C ${w * 0.28} ${y - h * 0.22}, ${w * 0.68} ${y - h * 0.26}, ${w + 20} ${y - h * 0.04}`);
+  };
   document.fonts.ready.then(() => {
-    const one = arct.getComputedTextLength() / 6, o = { v: -one };
-    gsap.to(o, { v: 0, duration: 14, ease: "none", repeat: -1, onUpdate: () => arct.setAttribute("startOffset", o.v) });
+    const one = arct.getComputedTextLength() / 8;
+    const c1 = { v: -one }, c2 = { x: 0 };
+    gsap.to(c1, { v: 0, duration: one / FAST, ease: "none", repeat: -1, onUpdate: () => arct.setAttribute("startOffset", c1.v) });
+    const cw = crawl.scrollWidth / 8;
+    gsap.fromTo(c2, { x: -cw }, { x: 0, duration: cw / SLOW, ease: "none", repeat: -1, onUpdate: () => (crawl.style.transform = `translateX(${c2.x}px)`) });
   });
+  gsap.ticker.add(drawArc);
   gsap.to("#spill i", { scaleY: () => 0.4 + Math.random() * 1.5, duration: 0.24, ease: "sine.inOut", yoyo: true, repeat: -1, repeatRefresh: true, stagger: 0.03 });
 
   // card layouts (px), recomputed on resize
@@ -61,7 +75,14 @@
     defaults: { ease: "power2.inOut" },
     scrollTrigger: {
       trigger: ".story", start: "top top", end: "+=5600", pin: true, scrub: 0.7, invalidateOnRefresh: true,
-      onUpdate: (st) => { const p = st.progress; if (p < 0.43) { cur = -1; gsap.to("#scopy, #sindex", { opacity: 0, duration: 0.2, overwrite: "auto" }); } else setStep(p < 0.62 ? 0 : p < 0.81 ? 1 : 2); },
+      onUpdate: (st) => {
+        // steps begin only once the card has become the device (label "D"); before that, clear every step
+        // visual so nothing from step 1 is left on the big card when scrolling back up
+        const t = st.progress * tl.duration(), d = tl.labels.D, span = (tl.duration() - d) / 3;
+        if (t < d) {
+          if (cur !== -1) { cur = -1; gsap.to("#scopy, #sraw, #stag, #sfield", { opacity: 0, duration: 0.2, overwrite: "auto" }); gsap.to("#spill .x, #spill .ok", { width: 0, opacity: 0, duration: 0.2, overwrite: "auto" }); }
+        } else setStep(Math.min(2, Math.floor((t - d) / span)));
+      },
     },
   });
   tl.to({}, { duration: 0.6 }) // a beat to read the comparison
