@@ -155,17 +155,31 @@ if (window.gsap && !REDUCED) {
     c.addEventListener("mouseenter", play);
   });
 
-  gsap.from("ol.steps li", { x: -30, opacity: 0, stagger: 0.07, duration: 0.8, ease: "expo.out", scrollTrigger: { trigger: "#install", start: "top 70%" } });
-  // the setup rail: fills with scroll, and each step pops to a check as the rail reaches it
+  // Setup, step by step: the section pins while the rail draws down; each card slides in as the rail reaches
+  // it and its number springs into a check. Both lists live on one timeline (the hidden one animates unseen);
+  // switching tabs re-measures. REDUCED skips all of this, so the steps are simply shown.
+  const ticks = [];
+  const stl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: () => ticks.forEach((t) => {
+    const on = stl.time() >= t.at; if (on === t.on) return; t.on = on;
+    gsap.to(t.el, on ? { scale: 1, rotate: 0, duration: 0.6, ease: "elastic.out(1,0.45)", overwrite: true } : { scale: 0, rotate: -40, duration: 0.25, ease: "power2.in", overwrite: true });
+  }), scrollTrigger: { trigger: "#install", start: "top top", end: "+=1200", pin: true, scrub: 0.6, invalidateOnRefresh: true, refreshPriority: -1 } });
   document.querySelectorAll("ol.steps").forEach((ol) => {
     const rail = document.createElement("div"); rail.className = "srail"; rail.innerHTML = "<b></b>"; ol.prepend(rail);
-    const items = [...ol.querySelectorAll("li")];
-    ScrollTrigger.create({ trigger: ol, start: "top 65%", end: "bottom 55%", scrub: true,
-      onUpdate: (st) => {
-        gsap.set(rail.firstChild, { scaleY: st.progress });
-        items.forEach((li, j) => { const on = st.progress >= (j + 0.5) / items.length; if (on !== li.classList.contains("done")) { li.classList.toggle("done", on); gsap.fromTo(li, { scale: on ? 0.97 : 1 }, { scale: 1, duration: 0.5, ease: "elastic.out(1,0.5)" }); } });
-      } });
+    const items = [...ol.querySelectorAll("li")], seg = 1 / items.length;
+    const reach = (li) => () => (li.offsetTop + 1) / Math.max(1, rail.offsetHeight); // rail top is 30px, badge centre li.top+31
+    items.forEach((li, j) => {
+      const tk = document.createElement("i"); tk.className = "tk"; tk.textContent = "✓"; li.appendChild(tk);
+      const t0 = j * seg;
+      if (j) stl.fromTo(rail.firstChild, { scaleY: reach(items[j - 1]) }, { scaleY: reach(li), duration: seg * 0.45, immediateRender: false }, t0);
+      // top, not a transform: a transform would trap the badge under the rail
+      stl.fromTo(li, { top: 30, opacity: 0 }, { top: 0, opacity: 1, duration: seg * 0.4, ease: "power2.out" }, j ? t0 + seg * 0.4 : 0);
+      ticks.push({ el: tk, at: j ? t0 + seg * 0.75 : seg * 0.45, on: false });
+    });
+    gsap.set(rail.firstChild, { scaleY: 0 });
+    stl.fromTo(rail, { opacity: 0 }, { opacity: 1, duration: seg * 0.4 }, 0);
   });
+  stl.to({}, { duration: 0.12 }); // a beat with every step checked before the pin releases
+  tabs.mac.addEventListener("click", () => ScrollTrigger.refresh()); tabs.win.addEventListener("click", () => ScrollTrigger.refresh());
   // re-measure pinned scenes once fonts and layout settle (avoids stale positions)
   addEventListener("load", () => ScrollTrigger.refresh());
   gsap.from(".faq", { y: 60, opacity: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: ".faq", start: "top 85%" } });

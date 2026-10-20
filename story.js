@@ -17,10 +17,10 @@
   // the arc is drawn in real pixels of the card's current size, so text never stretches when the card grows
   const ofEl = document.querySelector(".scard.of");
   const drawArc = () => {
-    // the reference curve: enters at the keyboard text's height, a gentle hump, leaves a little lower
-    const w = ofEl.offsetWidth, h = ofEl.offsetHeight, y = h * 0.56;
+    // the reference bell curve: flat in at the keyboard text's height, a rounded peak at the centre, flat out
+    const w = ofEl.offsetWidth, h = ofEl.offsetHeight, y = h * 0.56, pk = y - h * 0.16;
     arcsvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    arcp.setAttribute("d", `M -4 ${y} C ${w * 0.3} ${y - h * 0.15}, ${w * 0.62} ${y - h * 0.16}, ${w + 10} ${y - h * 0.02}`);
+    arcp.setAttribute("d", `M -4 ${y} C ${w * 0.22} ${y}, ${w * 0.3} ${pk}, ${w * 0.5} ${pk} C ${w * 0.7} ${pk}, ${w * 0.78} ${y}, ${w + 4} ${y}`);
   };
   document.fonts.ready.then(() => {
     const one = arct.getComputedTextLength() / 8;
@@ -65,10 +65,15 @@
         .to("#spill .x, #spill .ok", { width: 22, opacity: 1, duration: 0.4, ease: "back.out(2)" }, "<")
         .fromTo("#stag", { opacity: 0, y: 8, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2.5)" }, "+=0.4");
     } else {
-      $("#sfieldt").innerHTML = i === 1 ? CLEAN : MAIL;
+      // dictated: words appear one by one behind a blinking caret. Rebuilt on every setStep, and the box's
+      // opacity is always tweened fromTo, so a killed timeline can never leave it blank.
+      const ft = $("#sfieldt");
+      ft.innerHTML = (i === 1 ? CLEAN : MAIL).split(/(<br \/>)/).map((p) => p === "<br />" ? '<br class="w" />' : p.split(" ").filter(Boolean).map((w) => `<span class="w">${w} </span>`).join("")).join("") + '<i class="caret"></i>';
+      const words = ft.querySelectorAll(".w");
+      gsap.killTweensOf("#sfield, #sfieldt"); gsap.set("#sfieldt", { opacity: 1, filter: "none" }); gsap.set(words, { display: "none" });
       stepTl = gsap.timeline().to("#sraw, #stag", { opacity: 0, duration: 0.25 }).to("#spill .x, #spill .ok", { width: 0, opacity: 0, duration: 0.3 }, "<")
-        .fromTo("#sfield", { opacity: 0, y: 14, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" })
-        .from("#sfieldt", { opacity: 0, filter: "blur(6px)", duration: 0.6, ease: "expo.out" }, "-=0.4");
+        .fromTo("#sfield", { opacity: 0, y: 14, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "expo.out" }, 0.15)
+        .set(words, { display: "", stagger: 0.045 }, 0.35);
     }
   };
 
