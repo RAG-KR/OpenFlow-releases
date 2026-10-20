@@ -6,7 +6,7 @@ a{color:inherit}.serif{font-family:"EB Garamond",serif;font-weight:400;letter-sp
 .split .char{display:inline-block;will-change:transform}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 /* nav */
-nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:6px;padding:7px 7px 7px 16px;border-radius:16px;background:rgba(253,251,232,.82);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 10px 30px -20px rgba(0,0,0,.4);transition:padding .3s,box-shadow .3s}
+nav{position:fixed;top:14px;left:0;right:0;margin:0 auto;width:max-content;z-index:60;display:flex;align-items:center;gap:6px;padding:7px 7px 7px 16px;border-radius:16px;background:rgba(253,251,232,.82);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 10px 30px -20px rgba(0,0,0,.4);transition:padding .3s,box-shadow .3s}
 nav.scrolled{box-shadow:0 14px 34px -18px rgba(0,0,0,.45)}
 nav .brand{display:flex;align-items:center;gap:8px;font:500 20px/1 "EB Garamond",serif;text-decoration:none;margin-right:10px}
 nav .brand img{width:24px;height:24px;border-radius:6px}
@@ -47,26 +47,6 @@ nav .brand img{width:24px;height:24px;border-radius:6px}
 .band{background:var(--black);color:#e9e8e1;border-radius:40px 40px 0 0;padding:36px 0 40px;overflow:hidden;position:relative;z-index:3}
 .band .eyebrow{text-align:center;color:#8f8e89;margin-bottom:20px}
 .marquee{display:flex;gap:70px;white-space:nowrap;width:max-content;font:500 28px "EB Garamond",serif}
-/* speed */
-.speed{background:var(--green);color:#f3efe2;padding:110px 0 130px;text-align:center;border-radius:40px 40px 0 0;margin-top:-40px;position:relative;z-index:4}
-.speed h2{font-size:clamp(44px,6vw,80px);line-height:1;margin:0 0 14px}.speed h2 em{color:var(--lilac2)}
-.speed p{color:#b9c7bf;max-width:560px;margin:0 auto 56px}
-.meters{display:grid;grid-template-columns:1fr 1.7fr;gap:18px;max-width:860px;margin:0 auto}
-.meter{border-radius:26px;padding:28px;text-align:left;min-height:250px;display:flex;flex-direction:column;justify-content:space-between}
-.meter.kb{background:#163f33;border:1px solid #27584a}.meter.of{background:#f3efe2;color:var(--ink)}
-.meter .n{font:400 76px/1 "EB Garamond",serif}.meter small{font-size:13px;opacity:.7}
-.meter .bar{height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}.meter.of .bar{background:#e2dccb}
-.meter .bar b{display:block;height:100%;width:0;border-radius:4px;background:var(--lilac2)}.meter.of .bar b{background:var(--lilac)}
-/* how (pinned steps) */
-.how{position:relative;height:100vh;display:flex;align-items:center;overflow:hidden}
-.how svg.swoosh{position:absolute;inset:0;width:100%;height:100%;z-index:0}
-.how .wrap{position:relative;z-index:1;display:grid;grid-template-columns:200px 1fr 300px;gap:40px;align-items:center;width:100%}
-.how .index div{padding:4px 0 4px 12px;border-left:2px solid transparent;color:#b5b0a0;font-size:14px;transition:color .3s,border-color .3s}
-.how .index div.on{color:var(--ink);border-color:#d6463a}
-.how .shot{justify-self:center;width:min(380px,90%);aspect-ratio:4/5;border-radius:26px;background:radial-gradient(120% 90% at 30% 20%,#7a5a3c,#2a1d14 70%);position:relative;overflow:hidden;box-shadow:0 40px 70px -40px rgba(0,0,0,.6)}
-.how .field{position:absolute;left:8%;right:8%;bottom:22%;background:#fff;border-radius:14px;padding:14px;font-size:14px;min-height:96px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
-.how .minipill{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);width:70px;height:24px;border-radius:12px;background:#fdfbe8;border:2px solid var(--ink)}
-.how .copy h3{font:400 34px/1.05 "EB Garamond",serif;margin:0 0 8px}.how .copy p{color:var(--muted);margin:0}
 /* feature cards */
 .features{padding:110px 0 100px}
 .features h2,.section h2{font-size:clamp(40px,5vw,68px);line-height:1.02;margin:0 0 12px}
@@ -102,3 +82,41 @@ footer{padding:60px 28px 20px;overflow:hidden}
 .foot{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;max-width:1120px;margin:24px auto 0}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:100}
 @media(max-width:860px){nav .navlink.hide-sm{display:none}.meters,.grid3,.faq{grid-template-columns:1fr}.how .wrap{grid-template-columns:1fr}.how .index{display:none}.soon-panel{width:300px}}
+
+/* nav links: the label rolls up to a copy on hover */
+.navlink .roll{display:inline-block;overflow:hidden;height:1.4em;vertical-align:top}
+.navlink .roll b{display:block;font-weight:inherit;transition:transform .45s cubic-bezier(.2,.9,.2,1)}
+.navlink:hover .roll b{transform:translateY(-100%)}
+/* story: speed → card → how it works (one pinned scene) */
+.story{position:relative;height:100vh;overflow:hidden;z-index:4;border-radius:40px 40px 0 0;margin-top:-40px}
+.story .bgc{position:absolute;inset:0;background:var(--cream)}
+.story .bgg{position:absolute;inset:0;background:var(--green)}
+.story svg.sw{position:absolute;inset:0;width:100%;height:100%}
+.story svg.sw path{fill:none;stroke:#efe9cf;stroke-width:110;stroke-linecap:round}
+.s-head{position:absolute;left:0;right:0;top:8vh;text-align:center;padding:0 24px;z-index:3}
+.s-head h2{font-size:clamp(40px,5.6vw,78px);line-height:1;margin:0 0 12px}
+.s-head1{color:#f3efe2}.s-head1 em{color:var(--lilac2)}.s-head1 p{color:#b9c7bf;max-width:540px;margin:0 auto}
+.s-head2{color:var(--ink);opacity:0}
+.scard{position:absolute;z-index:2;border-radius:30px;overflow:hidden}
+.scard.kb{border:2px solid #2b5c4d;background:#123a2f;color:#e7efe9}
+.scard.of{color:#fff;background:radial-gradient(60% 70% at 70% 30%,#5e8fc4 0%,transparent 60%),radial-gradient(50% 60% at 30% 70%,#b07a4a 0%,transparent 65%),radial-gradient(70% 80% at 50% 50%,#3a2a20,#1a120d);box-shadow:0 50px 90px -50px rgba(0,0,0,.7)}
+.scard .lbl{position:absolute;top:34px;left:0;right:0;text-align:center;font-size:14px;z-index:2}
+.scard .lbl b{display:block;font:400 46px/1.05 "EB Garamond",serif}
+.kb .crawl{position:absolute;top:55%;left:0;white-space:nowrap;font:500 17px Figtree,sans-serif;color:#6e9585}
+.of svg.arc{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.of svg.arc text{font:600 22px Figtree,sans-serif;fill:#fff}
+.spill{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:5px;height:42px;padding:0 10px;border-radius:21px;background:#141413;border:2.5px solid #fdfbe8;box-shadow:0 10px 30px -10px rgba(0,0,0,.6)}
+.spill i{width:3px;height:12px;border-radius:2px;background:#fdfbe8}
+.spill .x,.spill .ok{width:22px;height:22px;border-radius:50%;background:#3a3a38;display:grid;place-items:center;font:700 11px Figtree,sans-serif;color:#ddd;opacity:0;width:0;overflow:hidden}
+.spill .tag{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) rotate(-6deg);background:#ef6a4c;color:#fff;font:600 13px Figtree,sans-serif;padding:5px 12px;border-radius:999px;white-space:nowrap;opacity:0}
+.sfield{position:absolute;left:9%;right:9%;top:24%;z-index:3;background:#fff;color:var(--ink);border-radius:12px;font:500 13.5px/1.5 Figtree,sans-serif;padding:14px 14px 44px;opacity:0;box-shadow:0 14px 34px -14px rgba(0,0,0,.5)}
+.sfield .tools{position:absolute;left:0;right:0;bottom:0;height:36px;border-top:1px solid #ece7d6;display:flex;align-items:center;gap:12px;padding:0 12px;color:#9a978c;font-size:13px}
+.sraw{position:absolute;left:10%;right:10%;top:9%;z-index:3;color:#fff;font:600 14px/1.55 Figtree,sans-serif;opacity:0}
+.sraw .hl{color:#ffb38a}
+.s-index{position:absolute;left:7vw;top:50%;transform:translateY(-50%);z-index:3;opacity:0}
+.s-index div{font:400 20px "EB Garamond",serif;color:#a9a493;padding:4px 0 4px 14px;border-left:3px solid #e6e0c9;transition:color .3s,border-color .3s}
+.s-index div.on{color:var(--ink);border-color:#ef6a4c}
+.s-copy{position:absolute;right:7vw;top:58%;width:300px;z-index:3;opacity:0}
+.s-copy h3{font:400 32px/1.1 "EB Garamond",serif;margin:0 0 12px}.s-copy p{margin:0;color:var(--ink);font-size:15px}
+@media(max-width:860px){.s-index{display:none}.s-copy{left:8vw;right:8vw;width:auto;top:auto;bottom:4vh}}
+.s-head2 h2{font-size:clamp(34px,4.2vw,58px)}

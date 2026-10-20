@@ -92,7 +92,7 @@ if (window.gsap && !REDUCED) {
     const s = new SplitText(el, { type: "chars", charsClass: "char" });
     gsap.from(s.chars, { yPercent: 110, opacity: 0, rotate: 6, duration: 0.9, ease: "expo.out", stagger: 0.025, scrollTrigger: { trigger: el, start: "top 88%" } });
     if (el.classList.contains("hov")) el.addEventListener("mouseenter", () =>
-      gsap.fromTo(s.chars, { y: 0 }, { keyframes: [{ y: "-0.22em", duration: 0.18, ease: "power2.out" }, { y: 0, duration: 0.7, ease: "elastic.out(1.1,0.35)" }], stagger: 0.022, overwrite: true }));
+      gsap.fromTo(s.chars, { y: 0 }, { keyframes: [{ y: "-0.22em", duration: 0.18, ease: "power2.out" }, { y: 0, duration: 0.7, ease: "elastic.out(1.1,0.35)" }], stagger: 0.022, overwrite: "auto" }));
   });
   gsap.from([".hero .lede", ".hero .btn", ".hero .alt"], { y: 24, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.1, delay: 0.5 });
   gsap.to(".hero .inner", { yPercent: -14, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
@@ -100,36 +100,6 @@ if (window.gsap && !REDUCED) {
   // app names drift by
   const m = document.getElementById("marquee"); m.innerHTML += m.innerHTML;
   gsap.to(m, { xPercent: -50, duration: 30, ease: "none", repeat: -1 });
-
-  // speed: counters + bars
-  ScrollTrigger.create({ trigger: ".meters", start: "top 75%", once: true, onEnter: () => {
-    document.querySelectorAll(".count").forEach((c) => { const o = { v: 0 }; gsap.to(o, { v: +c.dataset.to, duration: 1.8, ease: "power3.out", onUpdate: () => (c.textContent = Math.round(o.v)) }); });
-    document.querySelectorAll(".meter .bar b").forEach((b) => gsap.to(b, { width: b.dataset.w + "%", duration: 1.8, ease: "power3.out" }));
-  } });
-  gsap.from(".meter", { y: 60, opacity: 0, stagger: 0.12, duration: 1, ease: "expo.out", scrollTrigger: { trigger: ".meters", start: "top 85%" } });
-
-  // How it works: pinned; scrolling steps through three moments while the swoosh draws.
-  const STEPS = [
-    ["Speak naturally", "Ramble, pause, change your mind mid-sentence. Open Flow understands what you mean.", "so um can we meet friday at 3 no actually 4"],
-    ["Edits as you speak", "Fillers go, punctuation and lists appear, and your corrections are kept.", "Can we meet Friday at 4?"],
-    ["Use it anywhere", "Mail, Slack, docs, the terminal. If you can type there, you can talk there.", "Can we meet Friday at 4? I'll send the agenda tonight."],
-  ];
-  const idx = document.querySelectorAll(".how .index div"), h3 = document.querySelector("#howcopy h3"), hp = document.querySelector("#howcopy p"), field = document.getElementById("howfield");
-  let cur = -1;
-  const setStep = (i) => {
-    if (i === cur) return; cur = i;
-    idx.forEach((d, j) => d.classList.toggle("on", j === i));
-    gsap.fromTo("#howcopy", { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out" });
-    h3.textContent = STEPS[i][0]; hp.textContent = STEPS[i][1];
-    const t = STEPS[i][2], o = { n: 0 };
-    gsap.to(o, { n: t.length, duration: 0.9, ease: "none", onUpdate: () => (field.textContent = t.slice(0, Math.round(o.n))) });
-  };
-  setStep(0);
-  const sw = document.getElementById("swoosh"), L = sw.getTotalLength();
-  gsap.set(sw, { strokeDasharray: L, strokeDashoffset: L });
-  gsap.timeline({ scrollTrigger: { trigger: ".how", start: "top top", end: "+=1800", pin: true, scrub: 0.6, onUpdate: (st) => setStep(Math.min(2, Math.floor(st.progress * 3))) } })
-    .to(sw, { strokeDashoffset: 0, ease: "none" })
-    .fromTo(".how .shot", { rotate: -3, scale: 0.94 }, { rotate: 2, scale: 1, ease: "none" }, 0);
 
   // Feature cards: rise in a wave, tilt toward the cursor, and play their before → after.
   gsap.from(".fcard", { y: 80, rotate: (i) => (i % 2 ? 3 : -3), opacity: 0, stagger: 0.08, duration: 1.1, ease: "expo.out", scrollTrigger: { trigger: ".grid3", start: "top 80%" } });

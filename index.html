@@ -14,10 +14,10 @@
 <body>
 <nav id="nav">
   <a class="brand" href="#"><img src="icon.png" alt="" />Open Flow</a>
-  <a class="navlink hide-sm" href="#how">How it works</a>
-  <a class="navlink hide-sm" href="#features">Features</a>
+  <a class="navlink hide-sm" href="#how"><span class="roll"><b>How it works</b><b>How it works</b></span></a>
+  <a class="navlink hide-sm" href="#features"><span class="roll"><b>Features</b><b>Features</b></span></a>
   <div style="position:relative">
-    <button class="navlink" id="soon-btn" aria-expanded="false">Coming soon<span class="soon-tag">New</span></button>
+    <button class="navlink" id="soon-btn" aria-expanded="false"><span class="roll"><b>Coming soon</b><b>Coming soon</b></span><span class="soon-tag">New</span></button>
     <div class="soon-panel" id="soon-panel" role="menu">
       <div class="item"><div class="ico">ಕ</div><div><b>Kannada and more Indian languages</b><small>Dictate in Kannada, Tamil, Telugu and more, written in the right script.</small></div></div>
       <div class="item"><div class="ico">⚡</div><div><b>Offline AI cleanup</b><small>Run the cleanup on your own computer. No key, no internet.</small></div></div>
@@ -27,7 +27,7 @@
       <div class="item"><div class="ico">🔄</div><div><b>Auto-updates</b><small>New versions install themselves, signed by Apple and Microsoft.</small></div></div>
     </div>
   </div>
-  <a class="navlink hide-sm" href="#faq">FAQ</a>
+  <a class="navlink hide-sm" href="#faq"><span class="roll"><b>FAQ</b><b>FAQ</b></span></a>
   <a class="btn cta dl" href="download.html"><i class="fill"></i><span class="dl-label">Download</span></a>
 </nav>
 
@@ -60,24 +60,25 @@
   <div class="marquee" id="marquee"><span>Slack</span><span>Gmail</span><span>Notion</span><span>VS Code</span><span>Messages</span><span>Terminal</span><span>Google Docs</span><span>WhatsApp</span><span>Cursor</span><span>Outlook</span><span>ChatGPT</span><span>Linear</span></div>
 </div>
 
-<section class="speed">
-  <div class="wrap">
-    <h2 class="serif"><span class="split hov">3×</span> <em class="split hov">faster than typing</em></h2>
-    <p>You talk at about 150 words a minute and type at about 45. Open Flow keeps up, and cleans up as you go.</p>
-    <div class="meters">
-      <div class="meter kb"><div><small>Keyboard</small><div class="n"><span class="count" data-to="45">0</span></div><small>words per minute</small></div><div class="bar"><b data-w="28"></b></div></div>
-      <div class="meter of"><div><small>Open Flow</small><div class="n"><span class="count" data-to="150">0</span></div><small>words per minute</small></div><div class="bar"><b data-w="94"></b></div></div>
-    </div>
+<section class="story" id="how">
+  <div class="bgc"></div>
+  <svg class="sw" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+    <path id="sw1" d="M -80 860 C 260 760, 520 300, 820 330 C 1080 356, 1160 640, 1000 700 C 860 752, 860 520, 1120 400 C 1300 316, 1440 300, 1560 290" />
+    <path id="sw2" d="M 1560 120 C 1240 120, 1120 360, 1180 560 C 1240 760, 900 900, 520 980" />
+  </svg>
+  <div class="bgg"></div>
+  <div class="s-head s-head1"><h2 class="serif"><span class="split hov">3×</span> <em class="split hov">faster than typing</em></h2><p>You talk at about 150 words a minute and type at about 45. Open Flow keeps up, and cleans up as you go.</p></div>
+  <div class="s-head s-head2"><div class="eyebrow">How it works</div><h2 class="serif">Speak at the speed you think,<br /><em>in every app.</em></h2></div>
+  <div class="scard kb"><div class="lbl">Keyboard<b><span class="count" data-to="45">45</span> wpm</b></div><div class="crawl" id="crawl"></div></div>
+  <div class="scard of">
+    <div class="lbl">Open Flow<b><span class="count" data-to="150">150</span> wpm</b></div>
+    <svg class="arc" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"><path id="arcp" d="M -40 420 C 260 250, 700 230, 1040 380" fill="none" /><text><textPath id="arct" href="#arcp"></textPath></text></svg>
+    <div class="sraw" id="sraw"></div>
+    <div class="sfield" id="sfield"><span id="sfieldt"></span><div class="tools">＋ &nbsp;Aa &nbsp;☺ &nbsp;··· <span style="margin-left:auto">➤</span></div></div>
+    <div class="spill" id="spill"><span class="tag" id="stag">Correction identified</span><span class="x">✕</span><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span class="ok">✓</span></div>
   </div>
-</section>
-
-<section class="how" id="how">
-  <svg class="swoosh" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true"><path id="swoosh" d="M -50 820 C 300 700, 420 200, 760 260 C 1100 320, 1080 760, 1500 640" fill="none" stroke="#ebe5cd" stroke-width="90" stroke-linecap="round" /></svg>
-  <div class="wrap">
-    <div class="index"><div class="on">Speak naturally</div><div>Edits as you speak</div><div>Use it anywhere</div></div>
-    <div class="shot"><div class="field" id="howfield"></div><div class="minipill"></div></div>
-    <div class="copy" id="howcopy"><h3></h3><p></p></div>
-  </div>
+  <div class="s-index" id="sindex"><div class="on">Speak naturally</div><div>Edits as you speak</div><div>Use it anywhere</div></div>
+  <div class="s-copy" id="scopy"><h3></h3><p></p></div>
 </section>
 
 <section class="features" id="features"><div class="wrap">
@@ -135,5 +136,6 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
 <script src="common.js"></script>
 <script src="site.js"></script>
+<script src="story.js"></script>
 </body>
 </html>
