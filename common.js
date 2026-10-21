@@ -42,10 +42,78 @@ function confetti(x, y) {
   })();
 }
 
-// Real download links: confetti, then the file starts.
-document.querySelectorAll("a.dl-mac, a.dl-intel, a.dl-win, a.dl-go").forEach((a) =>
-  a.addEventListener("click", (e) => confetti(e.clientX, e.clientY)),
-);
+// Real download links: confetti, the file starts, then a heads-up card about the one-time OS warning.
+// Delegated, so links added later (download.html builds its buttons) are covered too.
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest("a");
+  if (!a || ![DL.mac, DL.intel, DL.win].includes(a.href)) return;
+  confetti(e.clientX, e.clientY);
+  setTimeout(() => headsUp(a.href === DL.win ? "win" : "mac"), 900);
+});
+
+const HEADS_UP = {
+  mac: {
+    title: "macOS will warn you once. That's expected.",
+    why: "It says <b>\u201cApple could not verify Open Flow is free of malware.\u201d</b> That's only because I haven't paid for Apple's $99/year developer account yet. The app is safe, and you only do this once:",
+    steps: [
+      "Open the file and drag Open Flow into <b>Applications</b>, then open it.",
+      "When the warning appears, click <b>Done</b>. <b>Not \u201cMove to Trash\u201d.</b>",
+      "Open <b>System Settings \u2192 Privacy &amp; Security</b>, scroll down and click <b>Open Anyway</b>.",
+      "Open Open Flow again and click <b>Open Anyway</b> once more. Done for good.",
+    ],
+    key: 1,
+  },
+  win: {
+    title: "Windows will warn you once. That's expected.",
+    why: "It says <b>\u201cWindows protected your PC.\u201d</b> That's only because the app isn't signed with a paid Microsoft certificate yet. The app is safe, and you only do this once:",
+    steps: [
+      "Run the installer you just downloaded.",
+      "On the blue \u201cWindows protected your PC\u201d screen, click <b>More info</b>.",
+      "Click <b>Run anyway</b>, then allow the microphone when asked.",
+    ],
+    key: 1,
+  },
+};
+
+function headsUp(os) {
+  const c = HEADS_UP[os];
+  let el = document.getElementById("hu");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "hu";
+    el.className = "hu";
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-modal", "true");
+    document.body.appendChild(el);
+    el.addEventListener("click", (e) => (e.target === el || e.target.closest(".hu-ok")) && (el.hidden = true));
+    addEventListener("keydown", (e) => e.key === "Escape" && (el.hidden = true));
+  }
+  el.innerHTML = `<div class="hu-card"><div class="eyebrow">Before you open it</div><h2>${c.title}</h2><p>${c.why}</p>
+    <ol class="hu-steps">${c.steps.map((s, i) => `<li${i === c.key ? ' class="key"' : ""}>${s}</li>`).join("")}</ol>
+    <button class="hu-ok">Got it</button><span class="hu-glare"></span></div>`;
+  el.hidden = false;
+  const card = el.querySelector(".hu-card");
+  el.querySelector(".hu-ok").focus();
+  if (!window.gsap || REDUCED) return;
+  // intro: rises and settles; then tilts toward the cursor with a glare that follows it
+  gsap.fromTo(card, { y: 40, rotateX: 16, opacity: 0, scale: 0.96 }, { y: 0, rotateX: 0, opacity: 1, scale: 1, duration: 0.9, ease: "elastic.out(1,0.75)" });
+  const rx = gsap.quickTo(card, "rotateX", { duration: 0.5, ease: "power3" });
+  const ry = gsap.quickTo(card, "rotateY", { duration: 0.5, ease: "power3" });
+  card.onpointermove = (e) => {
+    const r = card.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
+    rx(-ny * 8);
+    ry(nx * 8);
+    card.style.setProperty("--gx", `${(nx + 0.5) * 100}%`);
+    card.style.setProperty("--gy", `${(ny + 0.5) * 100}%`);
+    card.style.setProperty("--g", "1");
+  };
+  card.onpointerleave = () => {
+    rx(0);
+    ry(0);
+    card.style.setProperty("--g", "0");
+  };
+}
 
 if (window.gsap && !REDUCED) {
   // nav drops in, and a soft shadow appears once the page scrolls

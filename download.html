@@ -49,7 +49,6 @@ ol small{display:block;color:var(--muted)}
     ? 'Run the installer. If you see "Windows protected your PC": More info → Run anyway (once).'
     : "Open the file, drag Open Flow to Applications. If macOS blocks it: System Settings → Privacy & Security → Open Anyway (once).";
   document.getElementById("step2").textContent = IS_WIN ? "When Windows asks." : "And Accessibility, so it can type into other apps.";
-  document.querySelectorAll(".dl-go").forEach((a) => a.addEventListener("click", (e) => confetti(e.clientX, e.clientY)));
   if (window.gsap && !REDUCED) {
     gsap.from("#card", { y: 50, opacity: 0, scale: 0.96, duration: 1, ease: "expo.out" });
     gsap.from("#card > *:not(.mascot), .opt", { y: 16, opacity: 0, stagger: 0.06, duration: 0.8, ease: "expo.out", delay: 0.2 });

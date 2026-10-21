@@ -165,3 +165,17 @@ ol.steps .tk{position:absolute;left:20px;top:17px;z-index:2;width:28px;height:28
 .sfield .caret{display:inline-block;width:2px;height:1.1em;margin-left:1px;vertical-align:-.18em;background:var(--lilac);animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .split .word{display:inline-block;white-space:nowrap}
+/* heads-up after a download: why macOS / Windows warns, and the 3 clicks past it (tilt card, after React Bits' TiltedCard) */
+.hu{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px;background:rgba(20,20,19,.38);backdrop-filter:blur(6px);perspective:900px}
+.hu[hidden]{display:none}
+.hu-card{position:relative;width:min(460px,100%);padding:28px 28px 24px;border-radius:24px;background:var(--cream);border:1.5px solid var(--ink);box-shadow:0 30px 60px -28px rgba(0,0,0,.55);transform-style:preserve-3d;will-change:transform;overflow:hidden}
+.hu-glare{position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(farthest-corner circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,calc(var(--g,0)*.55)),rgba(255,255,255,0) 60%);mix-blend-mode:soft-light}
+.hu-card .eyebrow{color:var(--lilac)}
+.hu-card h2{font:400 32px/1.08 "EB Garamond",serif;letter-spacing:-.02em;margin:8px 0 10px}
+.hu-card p{margin:0 0 14px;color:var(--muted);font-size:15px}
+.hu-card p b{color:var(--ink)}
+.hu-steps{list-style:none;counter-reset:h;padding:0;margin:0 0 18px;display:grid;gap:8px}
+.hu-steps li{counter-increment:h;position:relative;padding:10px 12px 10px 44px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:14.5px;line-height:1.4}
+.hu-steps li::before{content:counter(h);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+.hu-steps li.key{background:var(--lilac2);border-color:var(--lilac)}
+.hu-ok{width:100%;padding:13px;border:0;border-radius:12px;background:var(--ink);color:#fff;font:600 15px Figtree,sans-serif;cursor:pointer}
